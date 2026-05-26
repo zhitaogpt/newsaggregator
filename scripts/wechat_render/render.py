@@ -283,7 +283,7 @@ def render_h1(text):
     return f"""
 <section style="margin:0 0 28px 0;padding:24px 22px 22px 22px;background:{THEME['navy']};border-radius:10px;">
   <h1 style="margin:0;font-size:{THEME['size_h1']};line-height:1.3;color:#FFFFFF;font-weight:700;letter-spacing:0.5px;">{_esc(text)}</h1>
-  <p style="margin:8px 0 0 0;font-size:13px;color:#B7C6D6;letter-spacing:1px;">7 分钟读完 · 今日 AI</p>
+  <p style="margin:8px 0 0 0;font-size:13px;color:#B7C6D6;letter-spacing:1px;">技术看趋势 · 资本看线索</p>
 </section>
 """
 
@@ -536,8 +536,8 @@ def render_highlights(items):
 def render_footer():
     return f"""
 <section style="margin:32px 0 0 0;padding:18px 18px;background:{THEME['navy']};border-radius:8px;text-align:center;">
-  <p style="margin:0 0 4px 0;color:#FFFFFF;font-size:15px;font-weight:600;letter-spacing:0.5px;">👋 关注「token 日报」</p>
-  <p style="margin:0;color:#B7C6D6;font-size:13px;line-height:1.7;">模型在卷、芯片在涨、资金在动<br/>每天 7 分钟，读完今日 AI</p>
+  <p style="margin:0 0 4px 0;color:#FFFFFF;font-size:15px;font-weight:600;letter-spacing:0.5px;">👋 关注「韬见 AI」</p>
+  <p style="margin:0;color:#B7C6D6;font-size:13px;line-height:1.7;">聚焦 AI 技术浪潮与资本市场变化<br/>记录智能时代的关键新闻、趋势判断与投资线索</p>
 </section>
 """
 

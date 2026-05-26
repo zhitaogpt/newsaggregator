@@ -9,7 +9,7 @@
     - 顶部："韬见 AI · AI 日报" 小字标签（暖金）
     - 主标题：日期 "2026-05-26"（大字、白色）
     - 副标题：摘要第 1 条（深一档白色，2 行内显示）
-    - 底部："7 分钟读完今日 AI · 趋势 · 资本 · 投资线索" slogan
+    - 底部："技术看趋势 · 资本看线索" slogan
   Right zone (40%):
     - 抽象 K 线条形 / 同心圆装饰
     - 与公众号头像视觉一致（深靛蓝 + 古典金 + 微青）
@@ -240,9 +240,9 @@ def render_cover(date_str, summary):
             d.text((pad_l, y), line, font=sub_fnt, fill=WHITE_DIM)
             y += 38
 
-    # Slogan（底部）
+    # Slogan（底部）—— 与公众号定位匹配：AI 技术 + 资本市场 双线
     slogan_fnt = _font_cn(17, bold=False)
-    d.text((pad_l, H - 52), "7 分钟读完今日 AI  ·  趋势 · 资本 · 投资线索",
+    d.text((pad_l, H - 52), "技术看趋势  ·  资本看线索",
            font=slogan_fnt, fill=GOLD_LIGHT)
 
     # 颗粒纹理（极轻）
