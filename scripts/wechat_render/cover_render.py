@@ -43,17 +43,35 @@ TEAL        = (72, 168, 156)
 WHITE_SOFT  = (245, 240, 230)
 WHITE_DIM   = (200, 208, 220)
 
-# 字体路径
-FONT_BOLD = "/System/Library/Fonts/PingFang.ttc"     # PingFang Heavy/Bold
-FONT_REG = "/System/Library/Fonts/PingFang.ttc"
+# 字体路径 — Hiragino Sans GB（macOS 自带，PIL 可正常打开；PingFang.ttc 在 PIL 下打不开）
+# face index: 0 = W3 (Regular), 2 = W6 (Bold)
+FONT_CN_PATH = "/System/Library/Fonts/Hiragino Sans GB.ttc"
+FONT_CN_REG_IDX = 0   # W3
+FONT_CN_BOLD_IDX = 2  # W6
 FONT_LATIN = "/System/Library/Fonts/Helvetica.ttc"
 
 
-def _font(path, size):
+def _font_cn(size, bold=False):
+    """加载中文字体（W6 if bold else W3），失败时回退至 STHeiti 再回退至 default。"""
+    fallbacks = [
+        (FONT_CN_PATH, FONT_CN_BOLD_IDX if bold else FONT_CN_REG_IDX),
+        ("/System/Library/Fonts/STHeiti Medium.ttc", 1),
+        ("/System/Library/Fonts/STHeiti Light.ttc", 1),
+    ]
+    for path, idx in fallbacks:
+        try:
+            return ImageFont.truetype(path, size, index=idx)
+        except Exception:
+            continue
+    return ImageFont.load_default()
+
+
+def _font_latin(size, bold=False):
+    """拉丁数字用 Helvetica。"""
     try:
-        return ImageFont.truetype(path, size)
+        return ImageFont.truetype(FONT_LATIN, size, index=1 if bold else 0)
     except Exception:
-        return ImageFont.load_default()
+        return _font_cn(size, bold=bold)
 
 
 def extract_meta(md_text):
@@ -197,34 +215,34 @@ def render_cover(date_str, summary):
     d = ImageDraw.Draw(canvas, "RGBA")
 
     # —— 左侧文字区 ——
-    pad_l = 48
-    text_max_w = int(W * 0.56) - pad_l
+    # 字号放大（封面在订阅号列表里实际显示 ~320px 宽，必须够大才看得清）
+    pad_l = 56
+    text_max_w = int(W * 0.58) - pad_l
 
-    # Logo label
-    label_fnt = _font(FONT_REG, 18)
-    d.text((pad_l, 48), "韬见 AI  ·  AI 日报", font=label_fnt, fill=GOLD_LIGHT)
+    # 顶部 logo label（金色小字）
+    label_fnt = _font_cn(22, bold=True)
+    d.text((pad_l, 44), "韬见 AI  ·  AI 日报", font=label_fnt, fill=GOLD_LIGHT)
 
     # 一条金色细线分隔
-    d.rectangle([pad_l, 78, pad_l + 36, 80], fill=GOLD)
+    d.rectangle([pad_l, 80, pad_l + 44, 83], fill=GOLD)
 
-    # 主标题：日期（大字）
-    date_fnt = _font(FONT_BOLD, 48)
-    d.text((pad_l, 96), date_str, font=date_fnt, fill=WHITE_SOFT)
+    # 主标题：日期（Helvetica 大字，更挺拔）
+    date_fnt = _font_latin(58, bold=True)
+    d.text((pad_l, 100), date_str, font=date_fnt, fill=WHITE_SOFT)
 
-    # 副标题：摘要
-    sub_fnt = _font(FONT_REG, 20)
+    # 副标题：摘要（W3，最多 2 行）
+    sub_fnt = _font_cn(24, bold=False)
     if summary:
         lines = wrap_text(d, summary, sub_fnt, text_max_w)
-        # 微信封面摘要区最多容纳 2 行
         lines = lines[:2]
-        y = 168
+        y = 184
         for line in lines:
             d.text((pad_l, y), line, font=sub_fnt, fill=WHITE_DIM)
-            y += 32
+            y += 38
 
-    # Slogan
-    slogan_fnt = _font(FONT_REG, 15)
-    d.text((pad_l, H - 50), "7 分钟读完今日 AI  ·  趋势 · 资本 · 投资线索",
+    # Slogan（底部）
+    slogan_fnt = _font_cn(17, bold=False)
+    d.text((pad_l, H - 52), "7 分钟读完今日 AI  ·  趋势 · 资本 · 投资线索",
            font=slogan_fnt, fill=GOLD_LIGHT)
 
     # 颗粒纹理（极轻）
