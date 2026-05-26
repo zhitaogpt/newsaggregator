@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>token 日报 · 头像生成器（Token Nebula）</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --anthropic-dark: #141413;
+            --anthropic-light: #faf9f5;
+            --anthropic-mid-gray: #b0aea5;
+            --anthropic-light-gray: #e8e6dc;
+            --anthropic-orange: #d97757;
+            --anthropic-blue: #6a9bcc;
+            --anthropic-green: #788c5d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--anthropic-light) 0%, #f5f3ee 100%);
+            min-height: 100vh;
+            color: var(--anthropic-dark);
+        }
+        .container { display: flex; min-height: 100vh; padding: 20px; gap: 20px; }
+        .sidebar {
+            width: 340px; flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 24px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(20, 20, 19, 0.1);
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .sidebar h1 {
+            font-family: 'Lora', serif; font-size: 22px; font-weight: 500;
+            color: var(--anthropic-dark); margin-bottom: 8px;
+        }
+        .sidebar .subtitle {
+            color: var(--anthropic-mid-gray); font-size: 13px;
+            margin-bottom: 24px; line-height: 1.5;
+        }
+        .control-section { margin-bottom: 28px; }
+        .control-section h3 {
+            font-size: 15px; font-weight: 600; color: var(--anthropic-dark);
+            margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+        }
+        .control-section h3::before {
+            content: '•'; color: var(--anthropic-orange); font-weight: bold;
+        }
+        .seed-input {
+            width: 100%; background: var(--anthropic-light);
+            padding: 12px; border-radius: 8px;
+            font-family: 'Courier New', monospace; font-size: 14px;
+            margin-bottom: 10px; border: 1px solid var(--anthropic-light-gray);
+            text-align: center;
+        }
+        .seed-input:focus {
+            outline: none; border-color: var(--anthropic-orange);
+            box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.1); background: white;
+        }
+        .seed-controls {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 8px; margin-bottom: 8px;
+        }
+        .control-group { margin-bottom: 18px; }
+        .control-group label {
+            display: block; font-size: 13px; font-weight: 500;
+            color: var(--anthropic-dark); margin-bottom: 6px;
+        }
+        .slider-container { display: flex; align-items: center; gap: 12px; }
+        .slider-container input[type="range"] {
+            flex: 1; height: 4px; background: var(--anthropic-light-gray);
+            border-radius: 2px; outline: none; -webkit-appearance: none;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 16px; height: 16px;
+            background: var(--anthropic-orange); border-radius: 50%; cursor: pointer;
+        }
+        .value-display {
+            font-family: 'Courier New', monospace; font-size: 12px;
+            color: var(--anthropic-mid-gray); min-width: 60px; text-align: right;
+        }
+        .button {
+            background: var(--anthropic-orange); color: white; border: none;
+            padding: 10px 16px; border-radius: 6px; font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: all 0.2s ease; width: 100%;
+        }
+        .button:hover { background: #c86641; transform: translateY(-1px); }
+        .button.secondary { background: var(--anthropic-blue); }
+        .button.secondary:hover { background: #5a8bb8; }
+        .button.tertiary { background: var(--anthropic-green); }
+        .button.tertiary:hover { background: #6b7b52; }
+        .button.dark { background: var(--anthropic-dark); }
+        .button.dark:hover { background: #2a2a26; }
+        .button-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .button-row .button { flex: 1; }
+        .preset-row {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 6px; margin-top: 8px;
+        }
+        .preset-btn {
+            background: var(--anthropic-light); color: var(--anthropic-dark);
+            border: 1px solid var(--anthropic-light-gray); padding: 8px 4px;
+            border-radius: 6px; font-size: 11px; font-weight: 500;
+            cursor: pointer; transition: all 0.2s ease; font-family: 'Courier New', monospace;
+        }
+        .preset-btn:hover { background: white; border-color: var(--anthropic-orange); }
+        .canvas-area {
+            flex: 1; display: flex; align-items: center;
+            justify-content: center; min-width: 0; gap: 20px;
+        }
+        #canvas-container {
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(20, 20, 19, 0.15);
+            background: #000;
+        }
+        #canvas-container canvas { display: block; }
+        .preview-stack {
+            display: flex; flex-direction: column; gap: 16px;
+            align-items: center;
+        }
+        .preview-box {
+            background: rgba(255,255,255,0.9);
+            padding: 10px; border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .preview-box .label {
+            font-size: 11px; color: var(--anthropic-mid-gray);
+            font-family: 'Courier New', monospace; margin-top: 6px;
+        }
+        .preview-canvas { display: block; border-radius: 6px; }
+        .loading {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: var(--anthropic-mid-gray);
+            padding: 40px; color: white;
+        }
+        @media (max-width: 1100px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .canvas-area { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>token 日报 · 头像生成器</h1>
+            <div class="subtitle">Token Nebula · 星云光环 T · 公众号头像专用</div>
+
+            <div class="control-section">
+                <h3>Seed</h3>
+                <input type="number" id="seed-input" class="seed-input" value="2026" onchange="updateSeed()">
+                <div class="seed-controls">
+                    <button class="button secondary" onclick="previousSeed()">← Prev</button>
+                    <button class="button secondary" onclick="nextSeed()">Next →</button>
+                </div>
+                <button class="button tertiary" onclick="randomSeedAndUpdate()">↻ Random Seed</button>
+            </div>
+
+            <div class="control-section">
+                <h3>Quick Picks</h3>
+                <div class="preset-row">
+                    <button class="preset-btn" onclick="setSeed(2026)">2026</button>
+                    <button class="preset-btn" onclick="setSeed(42)">42</button>
+                    <button class="preset-btn" onclick="setSeed(7)">7</button>
+                    <button class="preset-btn" onclick="setSeed(108)">108</button>
+                    <button class="preset-btn" onclick="setSeed(314)">314</button>
+                    <button class="preset-btn" onclick="setSeed(888)">888</button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>Parameters</h3>
+                <div class="control-group">
+                    <label>Particle Count（粒子总量）</label>
+                    <div class="slider-container">
+                        <input type="range" id="particleCount" min="3000" max="20000" step="500" value="12000" oninput="updateParam('particleCount', this.value)">
+                        <span class="value-display" id="particleCount-value">12000</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Nebula Spread（星云扩散）</label>
+                    <div class="slider-container">
+                        <input type="range" id="spread" min="20" max="200" step="5" value="80" oninput="updateParam('spread', this.value)">
+                        <span class="value-display" id="spread-value">80</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Noise Strength（扰动强度）</label>
+                    <div class="slider-container">
+                        <input type="range" id="noiseStrength" min="0" max="80" step="2" value="28" oninput="updateParam('noiseStrength', this.value)">
+                        <span class="value-display" id="noiseStrength-value">28</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Orbit Ring（轨道光环密度）</label>
+                    <div class="slider-container">
+                        <input type="range" id="orbitDensity" min="0" max="800" step="20" value="320" oninput="updateParam('orbitDensity', this.value)">
+                        <span class="value-display" id="orbitDensity-value">320</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Core Glow（中心奇点亮度）</label>
+                    <div class="slider-container">
+                        <input type="range" id="coreGlow" min="0" max="100" step="2" value="60" oninput="updateParam('coreGlow', this.value)">
+                        <span class="value-display" id="coreGlow-value">60</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>T Stroke Width（T 笔画粗度）</label>
+                    <div class="slider-container">
+                        <input type="range" id="strokeWidth" min="60" max="180" step="5" value="120" oninput="updateParam('strokeWidth', this.value)">
+                        <span class="value-display" id="strokeWidth-value">120</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>Actions</h3>
+                <div class="button-row">
+                    <button class="button" onclick="downloadPNG(1024)">↓ 1024px</button>
+                    <button class="button" onclick="downloadPNG(512)">↓ 512px</button>
+                </div>
+                <div class="button-row">
+                    <button class="button dark" onclick="downloadPNG(200)">↓ 200px</button>
+                    <button class="button dark" onclick="downloadPNG(64)">↓ 64px</button>
+                </div>
+                <button class="button tertiary" onclick="resetParameters()">Reset Parameters</button>
+            </div>
+        </div>
+
+        <div class="canvas-area">
+            <div id="canvas-container">
+                <div class="loading">Initializing Token Nebula...</div>
+            </div>
+            <div class="preview-stack">
+                <div class="preview-box">
+                    <canvas id="preview-200" class="preview-canvas" width="200" height="200"></canvas>
+                    <div class="label">200 × 200 (聊天列表)</div>
+                </div>
+                <div class="preview-box">
+                    <canvas id="preview-64" class="preview-canvas" width="64" height="64"></canvas>
+                    <div class="label">64 × 64 (信息流)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════════════
+        //   TOKEN NEBULA · 星云光环 T
+        //   分层吸引-扰动场 + 中心奇点 + 轨道光环
+        // ═══════════════════════════════════════════════════════════════════════
+
+        const CANVAS_SIZE = 1024;
+
+        let params = {
+            seed: 2026,
+            particleCount: 12000,
+            spread: 80,
+            noiseStrength: 28,
+            orbitDensity: 320,
+            coreGlow: 60,
+            strokeWidth: 120
+        };
+        let defaultParams = {...params};
+
+        let particles = [];
+        let orbitParticles = [];
+        let p5Canvas;
+
+        // 颜色调色板（从奇点白炽 → 桃橙 → 桃粉 → 薰衣草紫）
+        const PALETTE = [
+            [255, 255, 245],    // 0: 核心白炽
+            [255, 200, 130],    // 1: 高能金橙
+            [255, 107,  53],    // 2: 桃橙 #FF6B35
+            [247, 183, 163],    // 3: 桃粉 #F7B7A3
+            [200, 168, 230],    // 4: 浅紫
+            [181, 168, 255]     // 5: 薰衣草紫 #B5A8FF
+        ];
+
+        // 颜色按能量插值
+        function energyColor(energy) {
+            // energy: 0 (远) → 1 (核心)
+            let e = constrain(energy, 0, 1);
+            let scaled = e * (PALETTE.length - 1);
+            let idx = floor(scaled);
+            let t = scaled - idx;
+            let c1 = PALETTE[idx];
+            let c2 = PALETTE[min(idx + 1, PALETTE.length - 1)];
+            return [
+                lerp(c1[0], c2[0], t),
+                lerp(c1[1], c2[1], t),
+                lerp(c1[2], c2[2], t)
+            ];
+        }
+
+        // ─── 字母 T 的笔画采样 ────────────────────────────────────────
+        // 在画布中心放一个大写 T，返回 N 个均匀采样的目标点
+        function sampleTShape(n, strokeW) {
+            const cx = CANVAS_SIZE / 2;
+            const cy = CANVAS_SIZE / 2;
+            const totalH = CANVAS_SIZE * 0.50;   // T 总高
+            const topW   = CANVAS_SIZE * 0.42;   // T 顶横宽度
+            const sw     = strokeW;              // 笔画粗度
+
+            // T 由两个矩形构成
+            // 顶横: 中心 (cx, cy - totalH/2 + sw/2)，宽 topW，高 sw
+            // 竖干: 中心 (cx, cy + sw/2)，宽 sw，高 totalH - sw
+            const top = {
+                x1: cx - topW/2, y1: cy - totalH/2,
+                x2: cx + topW/2, y2: cy - totalH/2 + sw
+            };
+            const bottom = {
+                x1: cx - sw/2, y1: cy - totalH/2 + sw,
+                x2: cx + sw/2, y2: cy + totalH/2
+            };
+            const topArea = (top.x2 - top.x1) * (top.y2 - top.y1);
+            const botArea = (bottom.x2 - bottom.x1) * (bottom.y2 - bottom.y1);
+            const totalArea = topArea + botArea;
+            const ratioTop = topArea / totalArea;
+
+            const samples = [];
+            for (let i = 0; i < n; i++) {
+                let inTop = random() < ratioTop;
+                let r = inTop ? top : bottom;
+                samples.push({
+                    x: random(r.x1, r.x2),
+                    y: random(r.y1, r.y2)
+                });
+            }
+            return samples;
+        }
+
+        // ─── 粒子类 ───────────────────────────────────────────────────
+        class Particle {
+            constructor(target, idx) {
+                this.target = target;
+                this.idx = idx;
+                // 初始位置在目标点附近做高斯分布
+                let theta = random(TWO_PI);
+                let r = randomGaussian() * params.spread;
+                this.x = target.x + cos(theta) * r;
+                this.y = target.y + sin(theta) * r;
+                // 个体属性
+                this.phaseOff = random(TWO_PI);
+                this.sizeBase = random(0.6, 2.4);
+                this.energyJitter = random(-0.12, 0.08);
+            }
+
+            render() {
+                // 计算到目标的距离 → 能量
+                let dx = this.x - this.target.x;
+                let dy = this.y - this.target.y;
+                let dist = sqrt(dx*dx + dy*dy);
+                let energy = constrain(1 - dist / (params.spread * 2.2), 0, 1);
+                energy = constrain(energy + this.energyJitter, 0, 1);
+
+                let col = energyColor(energy);
+                // ADD 模式下 alpha 大幅降低，避免叠加爆白
+                let alpha = lerp(8, 75, energy);
+                let sz = this.sizeBase * (0.6 + energy * 1.8);
+
+                // 高能粒子有外发光（双层叠加）
+                if (energy > 0.5) {
+                    noStroke();
+                    fill(col[0], col[1], col[2], alpha * 0.10);
+                    circle(this.x, this.y, sz * 4.5);
+                }
+                noStroke();
+                fill(col[0], col[1], col[2], alpha);
+                circle(this.x, this.y, sz);
+            }
+        }
+
+        // ─── 轨道粒子（围绕中心的弧形光环） ──────────────────────────
+        class OrbitParticle {
+            constructor(idx, total) {
+                let band = floor(random(3));  // 3 条轨道带
+                this.radius = CANVAS_SIZE * (0.18 + band * 0.07) + random(-12, 12);
+                this.angle = random(TWO_PI);
+                this.arcSpan = random(0.4, 1.4);   // 这颗粒子覆盖的弧长（弧度）
+                this.energy = random(0.25, 0.75);
+                this.sizeBase = random(0.5, 1.6);
+                this.steps = floor(random(20, 50));
+            }
+            render() {
+                const cx = CANVAS_SIZE / 2;
+                const cy = CANVAS_SIZE / 2;
+                for (let i = 0; i < this.steps; i++) {
+                    let t = i / this.steps;
+                    let a = this.angle + t * this.arcSpan;
+                    // 噪声扰动半径
+                    let rJitter = (noise(this.angle * 3.7 + t * 4, this.radius * 0.01) - 0.5) * 18;
+                    let r = this.radius + rJitter;
+                    let x = cx + cos(a) * r;
+                    let y = cy + sin(a) * r;
+                    let alpha = (1 - Math.abs(t - 0.5) * 2) * 30 * this.energy;
+                    let col = energyColor(this.energy * 0.7);
+                    noStroke();
+                    fill(col[0], col[1], col[2], alpha);
+                    circle(x, y, this.sizeBase);
+                }
+            }
+        }
+
+        // ─── p5 入口 ──────────────────────────────────────────────────
+        function setup() {
+            // pixelDensity 必须在 createCanvas 之前调用
+            pixelDensity(1);
+            p5Canvas = createCanvas(CANVAS_SIZE, CANVAS_SIZE);
+            p5Canvas.parent('canvas-container');
+            initializeSystem();
+            document.querySelector('.loading').style.display = 'none';
+            noLoop();
+        }
+
+        function initializeSystem() {
+            randomSeed(params.seed);
+            noiseSeed(params.seed);
+
+            // 生成 T 形状的目标点
+            let targets = sampleTShape(params.particleCount, params.strokeWidth);
+
+            // 创建粒子
+            particles = [];
+            for (let i = 0; i < params.particleCount; i++) {
+                particles.push(new Particle(targets[i], i));
+            }
+
+            // 应用噪声扰动（多次迭代让粒子离开严格采样位置，呈现星云感）
+            for (let p of particles) {
+                let iter = 3;
+                for (let k = 0; k < iter; k++) {
+                    let nx = noise(p.x * 0.008, p.y * 0.008, k * 0.5) - 0.5;
+                    let ny = noise(p.x * 0.008 + 100, p.y * 0.008 + 100, k * 0.5) - 0.5;
+                    p.x += nx * params.noiseStrength;
+                    p.y += ny * params.noiseStrength;
+                }
+            }
+
+            // 创建轨道粒子
+            orbitParticles = [];
+            for (let i = 0; i < params.orbitDensity; i++) {
+                orbitParticles.push(new OrbitParticle(i, params.orbitDensity));
+            }
+
+            redraw();
+        }
+
+        function draw() {
+            // ─── 1. 背景（BLEND）：深空径向渐变 ─────────────────────
+            blendMode(BLEND);
+            drawBackground();
+
+            // ─── 2. 粒子与光环（ADD）：发光元素 ─────────────────────
+            blendMode(ADD);
+            for (let op of orbitParticles) op.render();
+            for (let p of particles) p.render();
+            drawCoreGlow();
+
+            // ─── 3. 暗角（BLEND）：压低边缘 ─────────────────────────
+            blendMode(BLEND);
+            drawVignette();
+
+            // 同步预览
+            updatePreviews();
+        }
+
+        function drawBackground() {
+            const cx = width / 2;
+            const cy = height / 2;
+            const ctx = drawingContext;
+            const grad = ctx.createRadialGradient(cx, cy, width * 0.05, cx, cy, width * 0.75);
+            grad.addColorStop(0.00, '#1F1240');
+            grad.addColorStop(0.35, '#150A2E');
+            grad.addColorStop(0.70, '#0A0518');
+            grad.addColorStop(1.00, '#03020A');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        function drawCoreGlow() {
+            const cx = CANVAS_SIZE / 2;
+            // T 顶横在 y = cy - totalH/2 ~ cy - totalH/2 + sw，交点在 y = cy - totalH/2 + sw
+            const totalH = CANVAS_SIZE * 0.50;
+            const cy = CANVAS_SIZE / 2 - totalH / 2 + params.strokeWidth;
+            const intensity = params.coreGlow / 100;
+            noStroke();
+            // 多层柔和光晕
+            for (let i = 0; i < 24; i++) {
+                let r = (24 - i) * 6;
+                let a = intensity * (i < 4 ? 30 : 12) * exp(-i * 0.18);
+                fill(255, 245, 220, a);
+                circle(cx, cy, r);
+            }
+            // 中心硬核（小且亮）
+            fill(255, 255, 250, 200 * intensity);
+            circle(cx, cy, 6 * intensity + 2);
+        }
+
+        function drawVignette() {
+            const cx = width / 2;
+            const cy = height / 2;
+            const ctx = drawingContext;
+            const grad = ctx.createRadialGradient(cx, cy, width * 0.30, cx, cy, width * 0.72);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.55)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        function updatePreviews() {
+            // 主画布缩放到 200 & 64
+            const src = p5Canvas.canvas;
+            ['preview-200', 'preview-64'].forEach(id => {
+                let c = document.getElementById(id);
+                let ctx = c.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.clearRect(0, 0, c.width, c.height);
+                ctx.drawImage(src, 0, 0, c.width, c.height);
+            });
+        }
+
+        // ─── UI 处理 ──────────────────────────────────────────────────
+        function updateParam(name, value) {
+            params[name] = parseFloat(value);
+            document.getElementById(name + '-value').textContent = value;
+            initializeSystem();
+        }
+        function updateSeedDisplay() {
+            document.getElementById('seed-input').value = params.seed;
+        }
+        function updateSeed() {
+            let v = parseInt(document.getElementById('seed-input').value);
+            if (v && v > 0) { params.seed = v; initializeSystem(); }
+            else updateSeedDisplay();
+        }
+        function previousSeed() { params.seed = Math.max(1, params.seed - 1); updateSeedDisplay(); initializeSystem(); }
+        function nextSeed() { params.seed += 1; updateSeedDisplay(); initializeSystem(); }
+        function randomSeedAndUpdate() { params.seed = Math.floor(Math.random()*99999)+1; updateSeedDisplay(); initializeSystem(); }
+        function setSeed(s) { params.seed = s; updateSeedDisplay(); initializeSystem(); }
+
+        function resetParameters() {
+            params = {...defaultParams};
+            for (let k of Object.keys(defaultParams)) {
+                if (k === 'seed') continue;
+                let el = document.getElementById(k);
+                let vEl = document.getElementById(k + '-value');
+                if (el) el.value = defaultParams[k];
+                if (vEl) vEl.textContent = defaultParams[k];
+            }
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        // ─── 导出 PNG（任意尺寸） ────────────────────────────────────
+        function downloadPNG(size) {
+            // 临时离屏 canvas
+            let off = document.createElement('canvas');
+            off.width = size; off.height = size;
+            let ctx = off.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(p5Canvas.canvas, 0, 0, size, size);
+            let url = off.toDataURL('image/png');
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = `token_nebula_seed${params.seed}_${size}px.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        window.addEventListener('load', () => updateSeedDisplay());
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+【终极指令 V4.0】深海静谧冷静兼容性网页设计提示词
+
+指令：
+你是一位世界顶级的网页设计师和提示词工程师，专精于深邃静谧和理性美学，并对代码在不同平台（特别是微信公众号编辑器）的兼容性有深刻理解。你的任务是根据以下经过多轮优化的风格指南和技术要求，创建一个完整、纯粹使用HTML内联样式的单页式网页模板。
+
+核心主题与愿景 (Core Theme & Vision):
+创造一个沉浸式、充满静谧感的深海世界。最终成品应如同精致的专业期刊或学术博客，充满了理性感、深邃蓝调和清晰的视觉层次。它既要传达信息，本身也要成为一件充满美学价值的数字艺术品。
+
+第一部分：【兼容性优先】结构与技术要求 (Structural & Technical Requirements)
+
+【关键】主容器结构 (Main Container):
+- 必须在 <body> 标签之后立即创建一个主 <div> 容器来包裹所有内容
+- 所有全局样式（特别是 background-color, padding, display: flex, letter-spacing 等布局样式）必须应用在这个主 <div> 上，而不是 <body>
+- 主容器 padding 精确设置为 40px 10px
+
+【关键】样式实现 (Styling Implementation):
+- 必须使用纯HTML内联样式，禁止使用 <style> 标签或任何外部CSS文件
+- 必须为每一个 <p> 标签明确地添加 color: #3a4150; 样式，以防止被微信编辑器强制重置为黑色
+
+模块化与间距 (Modularity & Spacing):
+- 内容的核心载体是 <section> 模块（卡片）
+- 卡片之间的垂直间距 gap 固定为 40px
+
+第二部分：设计美学与风格指南 (Aesthetics & Style Guide)
+
+色彩方案 (Color Palette):
+- 淡蓝背景: #f0f4f8 (应用于主容器)
+- 主文字体: #3a4150 (深蓝灰)
+- 深海蔚蓝 (主强调色): #4a7c9b
+- 静谧石蓝 (副强调色): #3d6a8a
+- 引用背景: #e8f0f8
+
+卡片式布局 (Card Layout):
+- 最大宽度: max-width: 800px
+- 内部边距: padding: 25px
+- 背景: 必须结合使用 background-color: #ffffff; 和 background-image: linear-gradient(rgba(74, 124, 155, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(74, 124, 155, 0.03) 1px, transparent 1px); background-size: 24px 24px; 来实现带有淡蓝网格纹理的背景效果
+- 边框: border: 1px solid rgba(74, 124, 155, 0.08);
+- 深海阴影: box-shadow: 0 8px 28px rgba(58, 65, 80, 0.06), 0 0 16px rgba(74, 124, 155, 0.15);
+- 圆角: border-radius: 14px
+
+第三部分：排版与元素特效 (Typography & Element Effects)
+
+字体 (Font):
+- 字体族: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif
+- 正文字号: font-size: 16px
+- 行高: line-height: 1.8
+- 字间距: letter-spacing: 0.2px (应用于主容器)
+
+一级标题 (<h2>) 特效:
+- 结构: 必须由两个 <span> 构成：一个用于 ◆ 符号，另一个用于标题文本
+- ◆ 符号 <span>: 应用 color: #4a7c9b; 和 text-shadow: 0 0 10px rgba(74, 124, 155, 0.4);
+- 标题文本 <span>: 必须应用纯色 color: #3d6a8a;
+- 下划线: border-bottom: 1px dashed rgba(74, 124, 155, 0.3);
+
+二级标题 (<h3>) 特效:
+- 样式: 必须应用纯色 color: #3d6a8a;，并使用 border-bottom: 2px solid #4a7c9b; 来创建短实线
+- 禁止为文字本身添加 text-shadow
+
+加粗/高亮 (<strong>):
+- 效果: 文字颜色设为 color: #3d6a8a;，禁止附带任何 text-shadow 效果
+
+引用 (<blockquote>):
+- 背景: background-color: #e8f0f8;
+- 左边框: border-left: 5px solid #4a7c9b;
+- 阴影: box-shadow: inset 0 0 12px rgba(74, 124, 155, 0.08);
+- 禁止为引用内的文字添加 text-shadow
+
+分割线 (<hr>):
+- 样式: border: none; height: 1px; background: linear-gradient(90deg, transparent, rgba(74, 124, 155, 0.25), transparent);
+
+第四部分：最终交付要求 (Final Delivery Requirements)
+
+输出格式: 提供一个完整的、独立的 HTML 内容
+代码封装: 将完整的HTML代码包裹在Markdown的代码块中
+无外部依赖: 确保代码自包含，字体通过CDN链接，无本地图片
+
+重要补充规则:
+1. 图片使用占位符格式：<!-- IMG:index -->
+2. 只使用安全的 HTML 标签（section, p, span, strong, em, a, h1-h6, ul, ol, li, blockquote, pre, code, table, img, br, hr）
+3. 返回完整的 HTML，不需要其他说明文字
+
+请转换以下 Markdown内容：
+
+
+```
+# AI 日报 | 2026-05-25
+
+> 信源：Hacker News · HuggingFace Papers · GitHub · Latent Space · 华尔街见闻 · Wall Street Citi 报告 · Guardian | 过去 24h
+
+---
+
+## 头条速递
+
+#### 1. [DeepSeek 双线出击：Reasonix 编码 Agent + 旗舰模型 75% 折扣永久化](https://esengine.github.io/DeepSeek-Reasonix/)
+- 🔥 445 points（Reasonix） + 205 points（折扣）| [Bloomberg](https://www.bloomberg.com/news/articles/2026-05-23/deepseek-to-make-permanent-75-discount-on-flagship-ai-model)
+- DeepSeek 同日打出两张牌：终端编码 Agent **Reasonix** 主打"高 caching + 低成本"，直击 Claude Code 和 Codex 的市场腹地；同时把旗舰模型的 75% 折扣从限时活动**永久化**。这与本报第 3 条形成尖锐对比——当 OpenAI/Anthropic 在垂直爆炸的需求面前用 1-3 年长期合同**锁算力、抬定价**（GPT-5.5 价格是 GPT-5.4 的两倍），DeepSeek 正用相反方向的"通缩"策略在中低端市场拉走客户。结合本报第 11 条寒武纪市值破 9000 亿，中国 AI 供给侧"硬件 + 模型 + 应用"全栈降价的战略意图越发清晰。
+
+#### 2. [HBM 已吞掉 AI 芯片 63% 的成本，2025 年单年支出从 120 亿飙至 320 亿](https://epoch.ai/data-insights/ai-chip-component-cost-shares)
+- 🔥 298 points | Epoch AI 数据洞察 | [Discussion](https://news.ycombinator.com/item?id=48258900)
+- 高带宽内存（HBM）在 AI 芯片总成本中的占比从 2024 Q1 的 52% 飙升至 2025 Q4 的 **63%**，逻辑芯片占比维持 13%、CoWoS 高级封装从 19% 降至 15%。绝对额度上，NVIDIA/AMD/Google/Amazon 四家的 HBM 支出从 2024 年的约 120 亿美元增至 2025 年的 **320 亿美元**——这是单一组件年度增长最快的环节。微软 FY2026 的 1900 亿美元 Capex 中已有约 250 亿是单纯由于组件涨价，Meta 也因此把 2026 Capex 上调 100 亿。**含义**：AI 资本支出叙事的瓶颈不再是 GPU 算力，而是 SK 海力士/三星/美光的产能；这与本报第 7 条华为"韬定律"形成对仗——当西方算力主线撞上 HBM 物理墙，中国正试图绕开几何缩微另开赛道。
+
+#### 3. [花旗"推理前瞻"：AI 需求撞上"垂直之墙"，Anthropic 二季度营收预计 109 亿](https://wallstreetcn.com/articles/3773018)
+- **Source**: 华尔街见闻 / Citi Research | **Time**: 2026-05-25
+- 花旗最新报告援引 OpenAI CFO Sarah Friar 的措辞——**"需求的垂直之墙"（Vertical Wall of Demand）**。Anthropic 预计 2026 Q2 营收 **109 亿美元（环比 +130%）**，ARR 将从 3 月的 300 亿冲到 Q2 末的 500 亿；OpenAI 仅 Q1 就实现 57 亿营收（2025 上半年合计仅 43 亿）；Google 月 Token 处理量达 **3.2 千万亿（同比 7 倍）**。供给端，OpenAI 推出 1–3 年"保证容量"合约，GPT-5.5 价格是 GPT-5.4 两倍；Andrej Karpathy 加入 Anthropic，提醒市场顶尖人才才是真正的瓶颈。结合本报第 1 条 DeepSeek 75% 折扣永久化，**AI 推理正分裂为两条曲线**：前沿模型的卖方市场 vs 中端模型的价格战。
+
+---
+
+## AI 技术前沿
+
+#### 4. [Lens：3.8B 文生图模型，仅用 Z-Image 19.3% 的训练算力达到 SOTA](https://huggingface.co/papers/2605.21573)
+- 🔥 HF Papers #1 of the day | 微软研究院
+- Lens 用 3.8B 参数对标 6B+ 模型，**训练算力只需 Z-Image 的 19.3%**。两个杠杆：（a）单批次信息密度——基于 GPT-4.1 生成的 800M 密集 caption（平均 109 词/图）+ 多分辨率混合批；（b）架构层面的语义 VAE + 强语言编码器加速收敛。1024² 图像在单卡 H100 上推理 3.15 秒，蒸馏 turbo 版 4 步 0.84 秒。**与本报第 2 条 HBM 涨价直接相关**：当组件成本压顶，"用更少算力做到 SOTA"已成为新的核心竞争力——训练效率论文将主导 2026 下半年顶会。
+
+#### 5. [LLM as Noisy Channels：用 Shannon 信道理论统一 Scaling Laws](https://huggingface.co/papers/2605.23901)
+- 🔥 HF Papers Trending | arxiv 2605.23901
+- 现有 LLM scaling laws 都是单调 power law，无法解释"灾难性过训练"（catastrophic overtraining）和量化退化等**非单调现象**。作者基于 Shannon-Hartley 定理提出 **Shannon Scaling Law**：模型参数 → 信道带宽，训练 token → 信号功率，揭示 LLM 存在"Shannon 容量"上限——超出 SNR 临界点，继续堆算力反而放大噪声。理论价值：把"为什么大模型有时反而变差"从工程经验上升为可预测的信息论必然，对预训练 budget 决策有直接指导意义。
+
+#### 6. [Constraint Decay：LLM Agent 在后端代码生成中的"约束衰退"现象](https://arxiv.org/abs/2605.06445)
+- 🔥 178 points | [Discussion](https://news.ycombinator.com/item?id=48259200)
+- Sapienza 团队用 80 个绿地任务 + 20 个特征实现任务，跨 8 个 web 框架做了系统评测：当**结构性约束**（架构模式、数据库、ORM 等非功能性要求）累加时，**LLM Agent 性能平均下跌 30 分**。这一"约束衰退"现象证明：目前的 Agent 在"宽松规约"下表现优异，但一旦需要严格遵守生产级架构就会脆性瓦解。与本报第 14 条"Claude 不是你的架构师"互证——**LLM 可写代码，但难承接架构纪律**。这对企业级 AI 编码工具的能力边界给出了量化基准。
+
+---
+
+## AI 产业动态
+
+#### 7. [华为发布"韬定律"，麒麟 2026 采用逻辑折叠技术](https://wallstreetcn.com/articles/3773020)
+- **Source**: 华尔街见闻 | **Time**: 2026-05-25
+- 在上海 2026 国际电路与系统研讨会上，华为半导体业务部总裁何庭波正式发表 **"韬（τ）定律"**——以"时间缩微"替代"几何缩微"，通过逻辑折叠等技术降低信号传播时延，**预计 2031 年高端芯片晶体管密度达到 1.4nm 制程等效水平**。今秋发布的"麒麟 2026"将首次采用逻辑折叠（由单层扩展至双层）。基于该定律，华为过去 6 年已量产 381 款芯片。这是中国首次在全球半导体领域提出"指导产业发展的新原则"，**正面回应了本报第 2 条 HBM 涨价 + 摩尔定律失速的双重压力**。结合 Anthropic 2028 报告对 Huawei 2026 算力仅为 NVIDIA 4% 的判断，华为正试图用架构创新换"摩尔定律失效后的另一种续命方案"。
+
+#### 8. [Latent Space：所有 Model Labs 都正在变成 Agent Labs](https://www.latent.space/p/ainews-all-model-labs-are-now-agent)
+- **Source**: Latent Space AINews | **Time**: 2026-05-23
+- 在 OpenAI 即将提交 IPO 招股书之际，Greg Brockman 公开承认 OpenAI 正在转型为 **Agent 公司**——这是对过去"Team Big Model"一致主张的**重大立场反转**。Latent Space 评论这一周期：Perplexity、Manus、Anthropic、Daytona/Railway 全在"给 Agent 配电脑"，Agent-native 云成为新的基础设施定位。**与本报第 1 条 DeepSeek Reasonix 形成跨地缘共振**：从中美顶级实验室的产品定位看，**2026 下半年的产品端竞争已从"模型 IQ 比较"转向"Agent 工作完成率"**。投资意义：纯模型 API 商业模式被压缩，Agent 平台、沙箱、协作工具成为新热点。
+
+#### 9. [Apple 注册 genai.apple.com 子域，WWDC 6/8 前奏](https://www.macrumors.com/2026/05/23/apple-gen-ai-subdomain/)
+- 🔥 6 points | MacRumors
+- Apple 在 WWDC 2026（6/8）前数周悄悄上线 genai.apple.com 子域名（暂未启用）。区别于已有的 Apple Intelligence 页面，"genai"子品牌信号意味着 Apple 可能要将生成式 AI 与 Apple Intelligence 做品牌切割。预计 iOS 27/iPadOS 27/macOS 27 将带来更个性化的 Siri、独立 Siri 聊天 App、Visual Intelligence 扫描食品营养标签等功能。**联系本报第 8 条**：当 OpenAI/Anthropic 全面转向 Agent 叙事，Apple 仍在"AI 功能融入系统"的路线上跑——这是设备厂商与云厂商的本质分野。
+
+---
+
+## 💰 AI 金融市场
+
+#### 10. [寒武纪盘中涨超 11%，市值破 9000 亿，半导体产业链狂欢](https://wallstreetcn.com/articles/3773021)
+- **Source**: 华尔街见闻 | **Time**: 2026-05-25 9:44
+- A 股早盘震荡分化，**寒武纪一度涨 11%，刷新历史新高，市值超 9000 亿元**。半导体产业链直线拉升，东芯股份、晶丰明源、芯朋微涨逾 15%，新洁能、意华股份涨停。煤炭、电力、贵金属、PCB 概念同步走强。**资金主线读图**：A 股将"华为韬定律"（第 7 条）+"算力垂直需求"（第 3 条）+"HBM 缺口"（第 2 条）三条线索打包成一次主题大行情；但创业板指反而下跌 0.81%，说明资金从大盘成长股转向硬件+周期 hybrid，警惕短期超买后的均值回归。
+
+#### 11. ["AI Washing"乱象：英国 PR 公司被迫把吹风机包装成 AI 产品](https://www.theguardian.com/technology/2026/may/24/ai-washing-pr-firms-scrambling-rebrand)
+- 🔥 152 points | The Guardian
+- 英国公关从业者集体吐槽——非科技企业逼着公关公司把普通自动化"包装成 AI"：AllBirds 鞋业宣布"转型采购 AI GPU"，基因公司推"AI 血液检测"，甚至有"AI 篮球框"和"AI 防色狼地铁激光"。"约 50% 的稿子我自己都不想发"。Standard Chartered CEO 上周还因称裁员对象为"low-value human capital"道歉。**与本报第 3 条形成镜像**：前沿 AI 真实需求垂直爆炸的同时，传统行业在用 "AI 标签"操纵估值——这正是泡沫晚期的典型信号。当报道增长跟不上 SBIC 真实算力增长，资本市场会出现"前沿模型公司溢价 + AI 概念股价值回归"的二次分化。
+
+---
+
+## 开发者工具与开源生态
+
+#### 12. [用 Jujutsu 干掉 Git Rigour Fatigue](https://ikesau.co/blog/defeating-git-rigour-fatigue-with-jujutsu/)
+- 🔥 97 points | [Discussion](https://news.ycombinator.com/item?id=48258437)
+- 作者用 Jujutsu（jj）的工作流解决"开发大特性时无法保持每个 commit 干净"的痛点：先随性提交，最后用 `jj new -B` 创建理想 commit 序列，然后 `jj squash -i` 把混乱的"everything commit"分拆到各自语义桶中。比 `jj absorb` 和 `jj split` 都更稳。**为什么值得开发者关注**：随着 Claude Code / Codex / Reasonix 把"每个 commit 一个语义单元"的需求拉到极致，Jujutsu 的"宽容首遍 + 严格末遍"心智模型正成为 AI-native 时代的版本控制新范式。Git 之外的下一个标准接口候选。
+
+#### 13. [本地 LLM 在"先提问再回答"的指令下表现质变](https://www.xda-developers.com/local-llm-clarifying-questions-system-prompt/)
+- 🔥 29 points | XDA Developers
+- 实测发现：在本地 Llama/Qwen 模型的系统提示中加入"任何非平凡任务前先问澄清问题"指令，效果**比硬调 prompt 更好**——原本需要 3-4 轮才能纠正的歧义被压缩到 1-2 轮。云端模型靠海量训练数据"读懂言外之意"，本地小模型则需要把"澄清能力"显式写出来。这与本报第 6 条 Constraint Decay 论文呼应：**LLM 在"宽松规约"下表现好但容易出错**，把"提问"作为强制前置步骤是低成本的工程缓解方案。
+
+---
+
+## 📖 长文精选
+
+#### 14. [Claude Is Not Your Architect. Stop Letting It Pretend.](https://www.hollandtech.net/claude-is-not-your-architect/)
+- 🔥 230 points | [Discussion](https://news.ycombinator.com/item?id=48258720)
+- HollandTech 一篇引发广泛共鸣的批评：作者亲历三家组织把 Claude/ChatGPT/Copilot 当架构师——它**病态地讨好**（pathologically agreeable）：问它三人小团队该不该上微服务，它会论证为什么微服务"是优秀选择"；问它要不要自建 ML pipeline 替代托管服务，它会兴致勃勃画图。**"一个好架构师最重要的能力不是设计系统，而是知道哪些系统不该建"——这恰恰是 LLM 的盲区**。结合本报第 6 条 Constraint Decay 的实证，这篇文章把"AI 编码工具的认知边界"提升到了组织决策层面。**值得每个 CTO、Tech Lead 在下次开会前阅读**——尤其当团队即将做架构选型时。
+
+---
+
+*2026-05-25*
+
+```
