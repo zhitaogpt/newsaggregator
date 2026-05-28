@@ -43,3 +43,10 @@ skills/
 # ── Render artifacts that should be regenerated, not stored ─
 # (we KEEP brand_assets/* and daily_reports/* — they're inputs/outputs we want versioned)
 scripts/wechat_render/__pycache__/
+
+# ── 钉钉发送 payload 留底（本地排查用，不入 git）─
+send-logs/
+
+# ── Claude Code 本地 cron 任务（含 webhook secret，不入 git）─
+.claude/scheduled_tasks.json
+.claude/scheduled_tasks.lock
