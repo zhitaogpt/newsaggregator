@@ -19,7 +19,7 @@ Generate a high-quality, insight-driven daily AI report in Simplified Chinese.
 2. **Topic-driven**: Group items by theme/topic for narrative coherence.
 3. **Selective curation**: 10-15 items total. Quality over quantity — skip noise, keep signal.
 4. **Insight-first**: Every item MUST have original analysis, not just summary. Ask: "So what? Why does this matter?"
-5. **Cross-reference**: Connect related items across sources to surface patterns and trends.
+5. **Fact + Opinion, no filler**: 每条 = 事实（发生了什么、关键数据）+ 观点（一条犀利的判断/影响）。禁止自我指涉的"信号链/互为印证/呼应第 N 条"式冗余缝合。
 
 ---
 
@@ -31,7 +31,7 @@ Run from `news-aggregator-skill` base directory. **All commands launched as para
 
 Note: The script uses a single `--keyword` for all sources in one invocation, so sources needing different keywords must be separate commands.
 
-Launch these 4 Bash calls simultaneously (single message, all `run_in_background: true`):
+Launch these 5 Bash calls simultaneously (single message, all `run_in_background: true`):
 
 ```bash
 # Bash 1: No-keyword sources (huggingface, chinai, essays, podcasts, latentspace, bensbites)
@@ -45,9 +45,12 @@ export https_proxy=http://127.0.0.1:13659 http_proxy=http://127.0.0.1:13659 && c
 
 # Bash 4: Finance-specific (wallstreetcn deep)
 export https_proxy=http://127.0.0.1:13659 http_proxy=http://127.0.0.1:13659 && cd /Users/guanxuan.zzt/repos/newsaggregator/.claude/skills/news-aggregator-skill && python3 scripts/fetch_news.py --source wallstreetcn --keyword "Stock,Crypto,Fed,Earnings,财报,营收,投资,基金" --limit 15 --deep --no-save > /tmp/ai_daily_finance.json 2>&1
+
+# Bash 5: arXiv 一手学术论文（cs.AI/cs.CL/cs.LG/cs.MA/cs.IR/cs.CV，仅保留最近 24h）
+export https_proxy=http://127.0.0.1:13659 http_proxy=http://127.0.0.1:13659 && cd /Users/guanxuan.zzt/repos/newsaggregator/.claude/skills/news-aggregator-skill && python3 scripts/fetch_arxiv.py --limit 12 --days 1 > /tmp/ai_daily_arxiv.json 2>&1
 ```
 
-After all background tasks complete, read `/tmp/ai_daily_*.json` files.
+After all background tasks complete, read `/tmp/ai_daily_*.json` files（含 `/tmp/ai_daily_arxiv.json`）。
 
 ### Step 2: Time-Gate, Curate & Deduplicate (with Previous-Day Dedup)
 
@@ -56,7 +59,7 @@ From all gathered data, **time-gate FIRST, then cross-day dedup, then curate**:
 1. **⏰ Time-Gate (MANDATORY FIRST STEP)**: For EVERY candidate item, verify publish date is within 24h of report date. Drop ALL items older than 24h immediately. See "时效性强制校验" section below for detailed rules. **This step is non-negotiable and must be done before any other curation.**
 2. **📰 跨日去重（MANDATORY SECOND STEP）**: Read the previous day's report from `daily_reports/` (e.g., for today 2026-04-28, read `daily_reports/2026-04-27_ai_daily_report.md`). Compare every surviving candidate against the previous report's items:
    - **Same event/story** (same URL, same project, same announcement, same funding round) → ❌ **Remove** — already reported yesterday
-   - **Follow-up or significant new development** of a previously reported story → ✅ Keep, but explicitly note it's an update (e.g., "续报：...") and reference what changed
+   - **Follow-up or significant new development** of a previously reported story → ✅ Keep, 用一句话点明"续报：相对上次报道新增了什么"，不要写"呼应昨日第 N 条"
    - If the previous day's report does not exist, skip this step
    - **This dedup happens BEFORE the general filter/rank step below, to ensure the final 10-15 items are all fresh**
 3. **Deduplicate (same-day)**: Same story from multiple sources → merge into one item, cite strongest source
@@ -72,8 +75,17 @@ Assign each curated item to ONE section (see Report Template below). If an item 
 ### Step 4: Write with Insight
 
 For each item, write:
-- **Summary**: One clear sentence — what happened
-- **Insight**: 2-5 sentences — why it matters, connections to broader trends, implications for developers/investors/industry. Use specific data points. Cross-reference other items in the report when relevant.
+- **Summary**: One clear sentence — what happened（事实）
+- **Insight**: 1-3 sentences — 一条犀利的观点或影响判断（观点），用具体数据支撑。每条独立成立，不依赖"见第 N 条"也能读懂。
+
+**禁止的写法（冗余）**：
+- ❌ "这条与本报第 6 条 X、第 12 条 Y 构成完整信号链——..."
+- ❌ "...与 FT 同日...互为印证"
+- ❌ "结合本报第 N 条...形成完整证据链"
+- ❌ "呼应昨日第 N 条..."
+- 任何"构成信号链 / 互为印证 / 形成完整链条 / 串成一条线"这类把条目强行绑在一起的元叙述
+
+**允许的关联（事实层面，非元叙述）**：仅当两条新闻存在真实因果/竞争/数据关系时，可用一句话点名具体事实，例如"A 公司今天降价，直接回应 B 公司上周的同档产品"，不要写"构成对照/形成呼应"。
 
 ### Step 5: Save & Present
 
@@ -105,7 +117,7 @@ Then display the full report to the user.
 
 #### N. [标题](url)
 - 🔥 Heat | [Discussion](url)
-- 摘要 + 深度 insight。交叉引用其他条目中的相关信号。
+- 摘要 + 深度 insight（事实 + 一条犀利观点）。
 
 ---
 
@@ -139,7 +151,16 @@ Then display the full report to the user.
 <!-- 1-2 items: GitHub trending, new tools, frameworks, developer experience -->
 
 #### N. [项目名](github_url) — 🌟 Stars
-- 项目定位 + 为什么值得关注。与行业趋势的关联。
+- 项目定位 + 为什么值得关注（事实 + 观点）。
+
+---
+
+## 📄 学术论文精选
+<!-- 1-2 items: 来自 arXiv 一手当日论文，选 signal 最高、对 LLM/Agent/推理/检索 最有实质贡献的 -->
+
+#### N. [论文标题](arxiv_url)
+- **arXiv**: 子类 | **Time**: 提交时间 | **Authors**: 作者
+- 解决了什么问题 + 方法一句话 + 观点（为何值得关注 / 对开发者的意义）。
 
 ---
 
@@ -148,7 +169,7 @@ Then display the full report to the user.
 
 #### N. [标题](url)
 - **Source**: 来源 | **Time**: 时间
-- 核心论点 + 为什么值得读。与当下 AI 发展的关联。
+- 核心论点 + 为什么值得读（事实 + 观点）。
 
 ---
 
@@ -166,6 +187,7 @@ Then display the full report to the user.
 | AI 产业动态 | 1-3 | Strategic moves, product launches, competitive shifts |
 | AI 金融市场 | 1-3 | Funding rounds, IPOs, stock movements, chip market |
 | 开发者工具与开源生态 | 1-2 | GitHub trending, new frameworks, developer tools |
+| 学术论文精选 | 1-2 | arXiv 当日一手论文，选 signal 最高、对 LLM/Agent/推理/检索有实质贡献的 |
 | 长文精选 | 1-2 | Deep essays/podcasts worth full read, timeless insights |
 
 ---
@@ -174,7 +196,7 @@ Then display the full report to the user.
 
 1. **Language**: Simplified Chinese. Keep well-known English proper nouns (ChatGPT, NVIDIA, etc.)
 2. **Anti-hallucination**: Only use data from fetched sources and search results. Never invent.
-3. **Cross-reference**: When items relate to each other, explicitly connect them (e.g., "结合本报第 N 条...")
+3. **事实+观点，禁止元叙述缝合**: 每条 = 事实 + 一条观点。禁止"构成信号链 / 互为印证 / 形成完整链条 / 呼应第 N 条 / 与 X 共同揭示"这类把条目绑在一起的元叙述。允许事实层面的极简关联（一句点名具体因果/竞争关系），不做形式化交叉引用。
 4. **Data-driven insight**: Include specific numbers (funding amounts, star counts, benchmark scores, stock prices) — not vague claims.
 5. **Contrarian pairs**: When sources present opposing views on the same topic, include BOTH and note the tension.
 6. **Time marking**: Always include time/date for each item. Mark supplementary (non-24h) items clearly.
