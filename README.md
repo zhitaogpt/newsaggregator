@@ -10,7 +10,9 @@
 | `.claude/skills/wechat-article-publisher/` | wx.limyai 公众号发布 API 封装 |
 | `scripts/wechat_render/render.py` | 自研 markdown → 微信兼容内联 HTML 转换器 |
 | `scripts/wechat_render/cover_render.py` | 自动生成 900×384 日报封面（品牌一致） |
-| `daily_reports/YYYY-MM-DD_ai_daily_report.md` | 历史日报存档 |
+| `scripts/build_dingtalk_payload.sh` | 从日报抽「今日摘要」构造钉钉 actionCard payload |
+| `scripts/send_dingtalk.sh` | 加签后发送 payload 到钉钉机器人 |
+| `daily_reports/YYYY-MM-DD_ai_daily_report.md` | 历史日报存档（本地留存，不入 git） |
 | `brand_assets/taojian_avatar/` | 公众号头像（韬见 AI · 瞳孔光圈方向） |
 | `brand_assets/wechat_render/` | 渲染输出（HTML + 封面 PNG），同时充当 GitHub 图床 |
 

@@ -41,8 +41,13 @@ skills/
 .agents/
 
 # ── Render artifacts that should be regenerated, not stored ─
-# (we KEEP brand_assets/* and daily_reports/* — they're inputs/outputs we want versioned)
+# (we KEEP brand_assets/* — 品牌资产与图床，需要版本化)
 scripts/wechat_render/__pycache__/
+
+# ── Project: 日报产物与本地实验文件（仅留本地存档，不入库）─
+daily_reports/
+codex-images/
+/pelican-bicycle.svg
 
 # ── 钉钉发送 payload 留底（本地排查用，不入 git）─
 send-logs/
